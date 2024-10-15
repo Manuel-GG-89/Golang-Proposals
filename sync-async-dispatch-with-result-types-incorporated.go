@@ -95,7 +95,7 @@ func main(){
 	// Opera los resultados iterando sobre ellos
 	for _, result := range results {
 		switch result := result.(type) {
-		case Ok[fn.BodyStr]:
+		case Ok[BodyStr]:
 			fmt.Println("Ok:", result.Value)
 			// agrega el VALOR del resultado al slice bodyResults
 			bodyResults = append(bodyResults, result.Value)
