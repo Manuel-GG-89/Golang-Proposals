@@ -38,23 +38,6 @@ func asyncHttpGetCall(url string, ch chan<- Result) {
 
 }
 
-func AsyncChainOfHttpGetCalls(urls []string) []Result {
-
-	results := make([]Result, len(urls))
-	ch := make(chan Result, len(urls))
-
-	for _, url := range urls {
-		go asyncHttpGetCall(url, ch)
-	}
-
-	for i := 0; i < len(urls); i++ {
-		results[i] = <-ch
-	}
-
-	close(ch)
-
-	return results
-}
 
 func SyncChainOfHttpGetCalls(urls []string) []Result {
 	var wg sync.WaitGroup
@@ -79,6 +62,25 @@ func SyncChainOfHttpGetCalls(urls []string) []Result {
 
 	return results
 }
+
+func AsyncChainOfHttpGetCalls(urls []string) []Result {
+
+	results := make([]Result, len(urls))
+	ch := make(chan Result, len(urls))
+
+	for _, url := range urls {
+		go asyncHttpGetCall(url, ch)
+	}
+
+	for i := 0; i < len(urls); i++ {
+		results[i] = <-ch
+	}
+
+	close(ch)
+
+	return results
+}
+
 
 
 func main(){
