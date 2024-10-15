@@ -95,11 +95,11 @@ func main(){
 	// Opera los resultados iterando sobre ellos
 	for _, result := range results {
 		switch result := result.(type) {
-		case ty.Ok[fn.BodyStr]:
+		case Ok[fn.BodyStr]:
 			fmt.Println("Ok:", result.Value)
 			// agrega el VALOR del resultado al slice bodyResults
 			bodyResults = append(bodyResults, result.Value)
-		case ty.Error[string]:
+		case Error[string]:
 			fmt.Println("Error:", result.Value)
 		}
 	}
