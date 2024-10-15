@@ -114,7 +114,7 @@ func main(){
 	// api calls
 	var results []Result = SyncChainOfHttpGetCalls(urls)
 
-	// Tour the result list and have anything with them (in this case it only prints)
+	// You can iterate over the result list, pattern-matching them and do anything with the unpacked values (in this case it only prints)
 	for _, result := range results {
 		switch result := result.(type) {
 		case Ok[BodyStr]:
