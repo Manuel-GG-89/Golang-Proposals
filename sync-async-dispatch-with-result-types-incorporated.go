@@ -82,6 +82,23 @@ func AsyncChainOfHttpGetCalls(urls []string) []Result {
 }
 
 
+func UnpackResults(results []ty.Result) ([]BodyStr, []error) {
+	var bodyRequestResults []BodyStr
+	var bodyRequestErrors []error
+
+	for _, result := range results {
+		switch result := result.(type) {
+		case ty.Ok[BodyStr]:
+			bodyRequestResults = append(bodyRequestResults, result.Value)
+		case ty.Error[error]:
+			bodyRequestErrors = append(bodyRequestErrors, result.Value)
+		}
+	}
+
+	return bodyRequestResults, bodyRequestErrors
+}
+
+
 
 func main(){
 	
@@ -94,18 +111,26 @@ func main(){
 	
 	// api calls
 	var results []Result = SyncChainOfHttpGetCalls(urls)
-	bodyResults := make([]BodyStr, 0)
-	// Opera los resultados iterando sobre ellos
+
+	// Tour the result list and have anything with them (in this case it only prints)
 	for _, result := range results {
 		switch result := result.(type) {
 		case Ok[BodyStr]:
 			fmt.Println("Ok:", result.Value)
-			// agrega el VALOR del resultado al slice bodyResults
-			bodyResults = append(bodyResults, result.Value)
-		case Error[string]:
+		case Error[error]:
 			fmt.Println("Error:", result.Value)
 		}
 	}
+
+
+	// or use the unpacking function
+	uResults, uErrors := UnpackResults(results)
+
+
+	// Print the results
+	fmt.Println("Resultados desempaquetados:", uResults)
+	fmt.Println("Errores desempaquetados:", uErrors)
+
 
 
 }
