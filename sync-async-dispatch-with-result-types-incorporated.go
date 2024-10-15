@@ -90,8 +90,10 @@ func UnpackResults(results []Result) ([]BodyStr, []error) {
 		switch result := result.(type) {
 		case Ok[BodyStr]:
 			bodyRequestResults = append(bodyRequestResults, result.Value)
+			bodyRequestErrors = append(bodyRequestErrors, nil)
 		case Error[error]:
 			bodyRequestErrors = append(bodyRequestErrors, result.Value)
+			bodyRequestResults = append(bodyRequestResults, "")
 		}
 	}
 
