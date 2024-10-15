@@ -20,27 +20,27 @@ func (Ok[T]) isResult()    {}
 func (Error[U]) isResult() {} 
 
 
-func asyncHttpGetCall(url string, ch chan<- ty.Result) {
+func asyncHttpGetCall(url string, ch chan<- Result) {
 
 	resp, err := http.Get(url)
 	if err != nil {
-		ch <- ty.Error[error]{Value: err}
+		ch <- Error[error]{Value: err}
 	}
 	defer resp.Body.Close()
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		ch <- ty.Error[error]{Value: err}
+		ch <- Error[error]{Value: err}
 	}
 
-	ch <- ty.Ok[BodyStr]{Value: string(body)}
+	ch <- Ok[BodyStr]{Value: string(body)}
 
 }
 
-func AsyncChainOfHttpGetCalls(urls []string) []ty.Result {
+func AsyncChainOfHttpGetCalls(urls []string) []Result {
 
-	results := make([]ty.Result, len(urls))
-	ch := make(chan ty.Result, len(urls))
+	results := make([]Result, len(urls))
+	ch := make(chan Result, len(urls))
 
 	for _, url := range urls {
 		go asyncHttpGetCall(url, ch)
@@ -55,10 +55,10 @@ func AsyncChainOfHttpGetCalls(urls []string) []ty.Result {
 	return results
 }
 
-func SyncChainOfHttpGetCalls(urls []string) []ty.Result {
+func SyncChainOfHttpGetCalls(urls []string) []Result {
 	var wg sync.WaitGroup
-	results := make([]ty.Result, len(urls))
-	ch := make(chan ty.Result, len(urls))
+	results := make([]Result, len(urls))
+	ch := make(chan Result, len(urls))
 
 	for _, url := range urls {
 		wg.Add(1)
@@ -111,22 +111,22 @@ func main(){
 
 WORK IN PROGRESS 
 
-func SyncChainOfHttpGetCallsBodys(urls []string) ty.Result {
+func SyncChainOfHttpGetCallsBodys(urls []string) Result {
 
 	// api calls
-	var results []ty.Result = SyncChainOfHttpGetCalls(urls)
+	var results []Result = SyncChainOfHttpGetCalls(urls)
 
-	unpackedResults := Map[ty.Result](results, func(r ty.Result) ty.Result {
+	unpackedResults := Map[Result](results, func(r Result) Result {
 		switch r := r.(type) {
-		case ty.Ok[BodyStr]:
-			return ty.Ok[string]{Value: r.Value}
-		case ty.Error[string]:
-			return ty.Error[string]{Value: r.Value}
+		case Ok[BodyStr]:
+			return Ok[string]{Value: r.Value}
+		case Error[string]:
+			return Error[string]{Value: r.Value}
 		}
-		return ty.Error[string]{Value: "Error desconocido"}
+		return Error[string]{Value: "Error desconocido"}
 	})
 
-	return ty.Error[string]{Value: "Error desconocido"}
+	return Error[string]{Value: "Error desconocido"}
 }
 
 **/
