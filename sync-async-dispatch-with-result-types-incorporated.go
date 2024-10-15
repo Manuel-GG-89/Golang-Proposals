@@ -82,15 +82,15 @@ func AsyncChainOfHttpGetCalls(urls []string) []Result {
 }
 
 
-func UnpackResults(results []ty.Result) ([]BodyStr, []error) {
+func UnpackResults(results []Result) ([]BodyStr, []error) {
 	var bodyRequestResults []BodyStr
 	var bodyRequestErrors []error
 
 	for _, result := range results {
 		switch result := result.(type) {
-		case ty.Ok[BodyStr]:
+		case Ok[BodyStr]:
 			bodyRequestResults = append(bodyRequestResults, result.Value)
-		case ty.Error[error]:
+		case Error[error]:
 			bodyRequestErrors = append(bodyRequestErrors, result.Value)
 		}
 	}
