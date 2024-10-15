@@ -133,7 +133,7 @@ func main(){
 	fmt.Println("Resultados desempaquetados:", uResults)
 	fmt.Println("Errores desempaquetados:", uErrors)
 
-	// or use the unpacked results in a traditional way
+	// and use the unpacked results in a traditional way
 	for i := 0; i < len(uResults); i++ {
 		if uErrors[i] != nil {
 			fmt.Println("Error:", uErrors[i])
