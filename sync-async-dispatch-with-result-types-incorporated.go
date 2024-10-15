@@ -1,4 +1,4 @@
-package aux
+package main
 
 import (
 	"io"
@@ -77,6 +77,34 @@ func SyncChainOfHttpGetCalls(urls []string) []ty.Result {
 	close(ch)
 
 	return results
+}
+
+
+func main(){
+	
+	// Examples of using the Result type
+	urls := []string{
+		"https://api.chucknorris.io/jokes/random",
+		"https://api.chucknorris.io/jokes/random",
+		"https://api.chucknorris.io/jokes/random",
+	}
+	
+	// api calls
+	var results []Result = SyncChainOfHttpGetCalls(urls)
+	bodyResults := make([]BodyStr, 0)
+	// Opera los resultados iterando sobre ellos
+	for _, result := range results {
+		switch result := result.(type) {
+		case ty.Ok[fn.BodyStr]:
+			fmt.Println("Ok:", result.Value)
+			// agrega el VALOR del resultado al slice bodyResults
+			bodyResults = append(bodyResults, result.Value)
+		case ty.Error[string]:
+			fmt.Println("Error:", result.Value)
+		}
+	}
+
+
 }
 
 /** 
