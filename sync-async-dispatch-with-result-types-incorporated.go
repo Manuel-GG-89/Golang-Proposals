@@ -19,6 +19,7 @@ type Error[U any] struct {
 func (Ok[T]) isResult()    {}
 func (Error[U]) isResult() {} 
 
+type BodyStr = string
 
 func asyncHttpGetCall(url string, ch chan<- Result) {
 
