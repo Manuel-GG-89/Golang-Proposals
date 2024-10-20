@@ -1,7 +1,7 @@
 # Golang-Proposals
 Proposals for Go language
 
-Proposal of a monadic Resut types and its examples of use are found in the Main.go file. 
+Proposal of monadics Resut types and its examples of use are found in the Main.go file. 
 Can be useful to dispatch Gorutines avoiding panics and unexpected results.
 
 The monadic_types.go file has some basic monads and high -order functions, but not 
