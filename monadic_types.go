@@ -102,8 +102,7 @@ func (m AccOperation[T]) Chain(f func(T any) AccOperation[T]) AccOperation[T] {
 	if m.err != nil {
 		return AccOperation[T]{err: m.err}
 	}
-	result := f(m.accValue)
-	return NewAccOperation[T](result.accValue, result.err)
+	return f(m.accValue)
 }
 
 // Function to execute the chained operations
