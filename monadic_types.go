@@ -102,7 +102,8 @@ func (m AccOperation[T]) Chain(f func(T any) AccOperation[T]) AccOperation[T] {
 	if m.err != nil {
 		return AccOperation[T]{err: m.err}
 	}
-	return f(m.accValue)
+	result := f(m.accValue)
+	return NewAccOperation[T](result.accValue, result.err)
 }
 
 // Function to execute the chained operations
@@ -168,4 +169,70 @@ func Reduce[T any, U any](slice []T, reducer func(U, T) U, initialValue U) U {
 		result = reducer(result, v)
 	}
 	return result
+}
+
+/* ************************************************************** */
+
+// Structure that defines the parameters of the AsyncHttpGetCall function
+type FunctionAndChanel[T func(), U chan<- Result] struct {
+	Function T
+	Ch       U
+}
+
+type AsyncIO[T FunctionAndChanel[func(), chan<- Result]] interface {
+	Return(T) AsyncIO[T]
+	Bind(func(T) AsyncIO[T]) AsyncIO[T]
+	Map(func(T) T) AsyncIO[T]
+}
+
+// crea un tipo AsyncIOProcess que implementa la interfaz AsyncIO
+type AsyncIOProcess[T FunctionAndChanel[func(), chan<- Result]] struct {
+	value T
+}
+
+// función para retornar un valor en el contexto de AsyncIOProcess
+func (a AsyncIOProcess[T]) Return(value T) AsyncIOProcess[T] {
+	return NewAsyncIOProcess(value)
+}
+
+// función para encadenar operaciones en el contexto de AsyncIOProcess
+func (a AsyncIOProcess[T]) Bind(f func(T) AsyncIOProcess[T]) AsyncIOProcess[T] {
+	return NewAsyncIOProcess(f(a.value).value)
+}
+
+// función para crear una instancia de AsyncIOProcess
+func NewAsyncIOProcess[T FunctionAndChanel[func(), chan<- Result]](value T) AsyncIOProcess[T] {
+	return AsyncIOProcess[T]{value: value}
+}
+
+// función para mapear operaciones en el contexto de AsyncIOProcess
+func (a AsyncIOProcess[T]) Map(f func(T) T) AsyncIOProcess[T] {
+	return NewAsyncIOProcess(f(a.value))
+}
+
+func testing() {
+	// Ejemplo de AsyncIOProcess
+	// Se crea una instancia de AsyncIOProcess con una función y un canal
+	// Se encadena una operación que recibe la función y el canal y los ejecuta
+	// Se crea una instancia de AsyncIOProcess con una función y un canal
+	// Se encadena una operación que recibe la función y el canal y los ejecuta
+	NewAsyncIOProcess(FunctionAndChanel[func(), chan<- Result]{
+		Function: func() {
+			fmt.Println("Hello, world!")
+		},
+		Ch: make(chan Result),
+	}).Bind(func(f FunctionAndChanel[func(), chan<- Result]) AsyncIOProcess[FunctionAndChanel[func(), chan<- Result]] {
+		f.Function()
+		return NewAsyncIOProcess(f)
+	}).Bind(func(f FunctionAndChanel[func(), chan<- Result]) AsyncIOProcess[FunctionAndChanel[func(), chan<- Result]] {
+		f.Function()
+		return NewAsyncIOProcess(f)
+	}).Bind(func(f FunctionAndChanel[func(), chan<- Result]) AsyncIOProcess[FunctionAndChanel[func(), chan<- Result]] {
+		f.Function()
+		return NewAsyncIOProcess(f)
+	}).Bind(func(f FunctionAndChanel[func(), chan<- Result]) AsyncIOProcess[FunctionAndChanel[func(), chan<- Result]] {
+		f.Function()
+		return NewAsyncIOProcess(f)
+	} /* ... */).value.Function()
+
 }
